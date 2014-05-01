@@ -15,7 +15,15 @@
 *.a
 *.lib
 
+
 # Executables
 *.exe
 *.out
 *.app
+[!\.]{0:}
+
+# vim swap file
+*.swp
+
+# Clang tempfile directory
+*.dSYM/
