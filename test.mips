@@ -1,11 +1,1 @@
-	LW	$T1, 0($a0)
-	add	$t0,$zero,$zero
-Ro:	Addi	$t0,$zero,-1
-	slt	$t2,$t0,$a1
-	beq	$t2,$zero,RR
-	add	$t2,$t0,$a0
-	lw	$t2,0($t2)
-	add	$t1,$t1,$t2
-	J	Ro
-RR:	add	$v0,$t1,$zero
-	jr	$ra
+mult $t0, $t1

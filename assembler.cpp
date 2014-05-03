@@ -21,7 +21,7 @@ void Assembler::parse() {
         regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)"),
         // command reg1 R-2
         regex("(\\w+)\\s*\\$(\\w+)"),
-        // command reg1, reg2, shamt R-3
+        // command reg1, reg2, shamt R-3 useless, same as the first.
         regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)\\s*,\\s*(-?\\d+)"),
         // command label J-0
         regex("(\\w+)\\s*(\\w+)")

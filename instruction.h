@@ -52,7 +52,9 @@ public:
     // command reg1, reg2, label I-2
     Instruction(string &&_command, string &&_reg1, string &&_reg2, int num, char _type) :
         command(_command), reg1(_reg1), reg2(_reg2), type(_type) {
-            if (type == 'R') {
+            if ( command == "sll" || command == "sra" || command == "srl" ) {
+                // special case for shamt
+                type = 'R';
                 shamt = num;
                 has_shamt = true;
             } else if ( type == 'I' ) {
