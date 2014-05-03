@@ -77,7 +77,7 @@ void Assembler::parse() {
                         break;
                 }
                 // cout << bitset<32>(tmp->binary()) << endl;
-                cout << hex << tmp->binary() << endl;
+                cout << hex << tmp->complie() << endl;
                 break;
             } 
     }

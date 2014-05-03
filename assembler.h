@@ -8,8 +8,10 @@
 #include <vector>
 #include <regex>
 #include <map>
+#include <string>
 #include <bitset>
 #include <algorithm>
+#include "instruction.h"
 
 class Assembler {
 public:

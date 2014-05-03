@@ -11,6 +11,7 @@
 #include <bitset>
 #include <cstdint>
 #include <algorithm>
+#include "instruction.h"
 
 using namespace std;
 
