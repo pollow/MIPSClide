@@ -33,7 +33,9 @@ void Assembler::parse() {
         for(auto j = types.begin(); j != types.end(); j++) 
             if ( regex_match(*i, result, *j) ) {
                 // cout << *i << endl;
-                // for(size_t k = 1; k < result.size(); k++) cout << result[k].str() << endl;
+                elements.push_back( {} );
+                for(size_t k = 1; k < result.size(); k++) 
+                    elements.back().push_back(result[k].str());
                 Instruction *tmp;
                 int imm = 0;
                 switch (j-types.begin()) {
