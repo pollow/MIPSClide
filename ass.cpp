@@ -6,11 +6,14 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
     fstream fin("test.mips", ios::in);
-    string ins;
-    getline(fin, ins);
-    Assembler A(ins);
-    A.trim();
+    string ins, content;
+    while(!fin.eof()) {
+        getline(fin, ins);
+        content += ins + "\n";
+    }
+    Assembler A(content);
     A.split();
+    A.trim();
     A.parse();
     A.print();
 
