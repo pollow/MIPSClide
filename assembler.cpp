@@ -48,11 +48,11 @@ void Assembler::parse() {
                                 atoi(result[2].str().c_str()), 'I');
                         break;
                     case 2 : 
-                        imm = labels[result[4].str()] - (i - statements.begin() + 1) & ((1 << 16) - 1);
+                        imm = labels[result[4].str()] - (i - statements.begin()) & ((1 << 16) - 1);
                         tmp = new Instruction(result[1].str(), result[2].str(), result[3].str(), imm, 'I');
                         break;
                     case 3 : 
-                        imm = labels[result[4].str()] - (i - statements.begin() + 1) & ((1 << 16) - 1);
+                        imm = labels[result[4].str()] - (i - statements.begin()) & ((1 << 16) - 1);
                         tmp = new Instruction(result[1].str(), result[2].str(), imm, 'I');
                         break;
                     case 4 : 

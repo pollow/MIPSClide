@@ -14,6 +14,8 @@ int main(int argc, char *argv[]) {
     Assembler A(content);
     A.split();
     A.trim();
+    A.format();
+    A.calc_label();
     A.parse();
     A.print();
 

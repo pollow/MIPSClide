@@ -209,7 +209,7 @@ unsigned int Instruction::complie() {
                 if (command == "lui") result += regs[reg1] << 16;
                 else result += regs[reg1] << 21;
             }
-            if (reg_num ==2) {
+            if (reg_num == 2) {
                 if (command == "beq" || command == "bne") {
                     result += regs[reg2] << 16;
                     result += regs[reg1] << 21;
