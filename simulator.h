@@ -1,3 +1,5 @@
+#ifndef __SIMULATOR_H__
+#define __SIMULATOR_H__
 
 #include "instruction.h"
 #include "assembler.h"
@@ -40,6 +42,7 @@ public:
     void tick();
     void run();
     void debug();
+
     void _add (int, int, int);
     void _sub (int, int, int);
     void _and (int, int, int);
@@ -67,4 +70,7 @@ public:
     static bool is_number(const std::string& s);
 
     map<string, void (Simulator::*)(int, int, int)> func_table;
+    static map<string, unsigned int> reg_name;
 };
+
+#endif

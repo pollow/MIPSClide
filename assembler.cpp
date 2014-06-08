@@ -27,10 +27,17 @@ void Assembler::parse() {
         regex("(\\w+)\\s*(\\w+)")
     };
 
-    // test
     smatch result;
     for(auto i = statements.begin(); i != statements.end(); i++) {
-        for(auto j = types.begin(); j != types.end(); j++) 
+        if ( tolower((*i)[0]) == 'd' || (*i)[1] == 'D' ) {
+            static regex comma_split("(^\\s+)|(\\s+$)");
+            string data = i->substr(3, i->size()-3);
+            data = regex_replace(data, comma_split, " ");
+            stringstream buffer( content );
+            // convert into number
+        } else if ( i->substr(0, 4) == "resd" || i->substr(0, 4) == "RESD" ) {
+            // convert into number
+        } else for(auto j = types.begin(); j != types.end(); j++) 
             if ( regex_match(*i, result, *j) ) {
                 // cout << *i << endl;
                 elements.push_back( {} );
@@ -78,8 +85,7 @@ void Assembler::parse() {
                         tmp = new Instruction(result[1].str(), imm, 'I');
                         break;
                 }
-                // cout << bitset<32>(tmp->binary()) << endl;
-                cout << hex << tmp->complie() << endl;
+                machine_code.push_back(tmp->complie());
                 break;
             } 
     }
@@ -99,22 +105,9 @@ void Assembler::calc_label() {
 
 void Assembler::trim() {
     static regex trim("(^\\s+)|(\\s+$)");
-    static regex white("\\s+");
-    static regex format("\\s*([,:])\\s*");
     static regex comment("#.*$");
     for(auto i=statements.begin(); i!=statements.end(); i++) {
-        // trim space ' '
-        // while( ( pos = i->find_first_of(' ') ) != string::npos ) {
-        //     i->erase(pos, 1);
-        // }
-
-        // // trim tab '\t'
-        // while( ( pos = i->find_first_of('\t') ) != string::npos ) {
-        //     i->erase(pos, 1);
-        // }
         *i = regex_replace(*i, trim, "");
-        // *i = regex_replace(*i, white, " ");
-        // *i = regex_replace(*i, format, "$1 ");
         *i = regex_replace(*i, comment, "");
     }
 }
@@ -144,11 +137,7 @@ void Assembler::format() {
         string &str = statements[i];
         smatch result;
         if ( regex_match(str, result, label) ) {
-            // if ( result.size() == 3 ) {
-            //     labels.insert( { result[2].str(), i } );
-            // }
             if ( (size_t) result[1].length() != str.length() ) {
-                // statements.erase(statements.begin()+i);
                 string tmp = result[2].str();
                 str.erase( str.find(result[1].str()), result[1].length() );
                 statements.insert(statements.begin()+i,tmp+":");
@@ -160,7 +149,17 @@ void Assembler::format() {
 }
 
 void Assembler::print() {
+#ifdef DEBUG
     for(auto i = statements.begin(); i != statements.end(); i++) {
-        cout << i-statements.begin() << " : " << *i << endl;
+        cout << setfill('0') << setw(4) << i-statements.begin() << " : " << *i << endl;
     }
+#endif
+
+    for(auto i = machine_code.begin(); i != machine_code.end(); i++) {
+        cout << "0x" << setfill('0') << setw(8) << hex << *i << endl;
+    }
+}
+
+unsigned int Assembler::reverse_word(unsigned int a) {
+    return ((0xFF & a) << 24) | ((0xFF00 & a) << 8) | ((0xFF0000 & a) >> 8) | ((0xFF000000 * a) >> 24);
 }

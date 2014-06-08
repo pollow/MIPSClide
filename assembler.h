@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <sstream>
 #include <vector>
@@ -18,6 +19,7 @@ public:
     string content;
     vector<string> statements;
     vector<vector<string>> elements;
+    vector<unsigned int> machine_code;
     map<string, int> labels;
 
     Assembler(string &_content) : content(_content) {}
@@ -27,6 +29,7 @@ public:
     void calc_label();
     void parse();
     void print();
+    unsigned int reverse_word(unsigned int);
 };
 
 #endif
