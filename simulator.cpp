@@ -59,7 +59,7 @@ void Simulator::init() {
     memset(regs, 0, sizeof(int32_t) * 32);
     pc = 0;
 
-    print();
+    print("plain", cout);
 }
 
 void Simulator::tick() {

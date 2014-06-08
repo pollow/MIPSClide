@@ -148,15 +148,26 @@ void Assembler::format() {
     }
 }
 
-void Assembler::print() {
+void Assembler::print(string type, ostream &out) {
+
 #ifdef DEBUG
     for(auto i = statements.begin(); i != statements.end(); i++) {
         cout << setfill('0') << setw(4) << i-statements.begin() << " : " << *i << endl;
     }
 #endif
 
-    for(auto i = machine_code.begin(); i != machine_code.end(); i++) {
-        cout << "0x" << setfill('0') << setw(8) << hex << *i << endl;
+    if ( type == "coe" ) {
+        out << "memory_initialization_radix = 16" << endl << "memory_initialization_vector=" << endl;
+        for(auto i : machine_code) {
+            out << setfill('0') << setw(8) << hex << i << ',' << endl;
+        }
+        out << "00000000;" << endl;
+    } else if ( type == "plain" ) {
+        for(auto i : machine_code) {
+            out << "0x" << setfill('0') << setw(8) << hex << i << endl;
+        }
+    } else {
+        throw invalid_argument("Output type could only be 'coe' or 'plain'");
     }
 }
 

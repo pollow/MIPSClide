@@ -28,7 +28,7 @@ public:
     void format();
     void calc_label();
     void parse();
-    void print();
+    void print(string t = "plain", ostream &tt = cout);
     unsigned int reverse_word(unsigned int);
 };
 

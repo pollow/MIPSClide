@@ -26,7 +26,7 @@ public:
     Disassembler(vector<unsigned int> &a) : codes(a) {}
    
     void reverse();
-    void print();
+    void print(ostream &);
 };
 
 #endif

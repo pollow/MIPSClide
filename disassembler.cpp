@@ -28,8 +28,8 @@ void Disassembler::reverse() {
     }
 }
 
-void Disassembler::print() {
+void Disassembler::print(ostream &out) {
     for(auto i = instructions.begin(); i != instructions.end(); i++) {
-        cout << *i << endl;
+        out << *i << endl;
     }
 }

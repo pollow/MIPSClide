@@ -21,9 +21,15 @@
 *.out
 *.app
 [!\.]{0:}
+ass
+dis
+sim
 
 # vim swap file
 *.swp
 
 # Clang tempfile directory
 *.dSYM/
+
+#temproray files
+test*
