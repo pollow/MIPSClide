@@ -177,17 +177,25 @@ map<unsigned int, string> Instruction::re_regs = {
 
 unsigned int Instruction::complie() {
     unsigned long result = 0;
-
+    if ( !opcode.count(command) ) {
+        throw invalid_argument("No such command"); 
+    }
     switch ( type ) {
         case 'R':
             result += opcode[command] << 26;
             if (reg_num == 1) {
+                if ( !regs.count(reg1) ) {
+                    throw invalid_argument("No such register"); 
+                }
                 if ( command == "mfhi" || command == "mflo" ) {
                     result += regs[reg1] << 11;
                 } else {
                     result += regs[reg1] << 21;
                 }
             } else if ( reg_num == 2 ) {
+                if ( !(regs.count(reg1) && regs.count(reg2)) ) {
+                    throw invalid_argument("No such register"); 
+                }
                 if(has_shamt) {
                     result += (regs[reg1] << 11) + (regs[reg2] << 16);
                     result += shamt << 6;
@@ -199,6 +207,9 @@ unsigned int Instruction::complie() {
                     result += (regs[reg1] << 21) + (regs[reg2] << 16);
                 }
             } else {
+                if ( !(regs.count(reg1) && regs.count(reg2) && regs.count(reg3)) ) {
+                    throw invalid_argument("No such register"); 
+                }
                 result += (regs[reg1] << 11) + (regs[reg2] << 21) + (regs[reg3] << 16);
             }
             result += func[command];
@@ -280,19 +291,21 @@ string Instruction::reverse() {
             result = re_func_0_3[funct] + " $" + re_regs[rs];
         } else if (re_func_0_shamt.count(funct)) {
             result = re_func_0_shamt[funct] + " $" + re_regs[rd] + ", $" + re_regs[rs] + ", " + to_string(shamt);
-        }
+        } else throw invalid_argument("No such instruction");
     } else if ( op == 0x1c ) {
         if ( re_func_1c_0.count(funct) ) {
             result = re_func_1c_0[funct] + " $" + re_regs[rs] + ", $" + re_regs[rt];
         } else if ( re_func_1c_1.count(funct) ) {
             result = re_func_1c_0[funct] + " $" + re_regs[rd] + ", $" + re_regs[rs];
-        } else {
+        } else if (funct == 2) {
             result = "mul $" + re_regs[rd] + ", $" + re_regs[rs] + ", $" + re_regs[rt];
-        }
+        } else throw invalid_argument("No such instruction");
     } else if ( op == 0x01 ) {
         need_label = true;
         offset = imm;
-        result = re_branch[rt] + " $" + re_regs[rs] + ", ";
+        if ( re_branch.count(rt) && re_regs.count(rs) ) {
+            result = re_branch[rt] + " $" + re_regs[rs] + ", ";
+        } else throw invalid_argument("No such instruction");
     } else {
         if (re_op_i_0.count(op)) {
             result = re_op_i_0[op] + " $" + re_regs[rt] + ", $" + re_regs[rs] + ", " + to_string(imm);
@@ -306,7 +319,7 @@ string Instruction::reverse() {
             need_target = true;
             target = gettarget();
             result = re_jump[op] + " ";
-        }
+        } else throw invalid_argument("No such instruction");
     }
 
     return result;

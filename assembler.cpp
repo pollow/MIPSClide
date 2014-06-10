@@ -7,87 +7,113 @@ void Assembler::parse() {
     static vector<regex> types {
         // command reg1, reg2, imm I-0
         regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)\\s*,\\s*(-?\\d+)"),
-        // command reg1, imm I-1
-        regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*(-?\\d+)"),
-        // command reg1, reg2, label I-2
-        regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)\\s*,\\s*(\\w+)"),
-        // command reg1, label I-3
-        regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*(\\w+)"),
-        // command reg1, number(reg2) I-4
-        regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*(-?\\d+)\\s*\\(\\s*\\$(\\w+)\\s*\\)"),
-        // command reg1, reg2, reg3 R-0
-        regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)"),
-        // command reg1, reg2 R-1
-        regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)"),
-        // command reg1 R-2
-        regex("(\\w+)\\s*\\$(\\w+)"),
-        // command reg1, reg2, shamt R-3 useless, same as the first.
-        regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)\\s*,\\s*(-?\\d+)"),
-        // command label J-0
-        regex("(\\w+)\\s*(\\w+)")
+            // command reg1, imm I-1
+            regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*(-?\\d+)"),
+            // command reg1, reg2, label I-2
+            regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)\\s*,\\s*(\\w+)"),
+            // command reg1, label I-3
+            regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*(\\w+)"),
+            // command reg1, number(reg2) I-4
+            regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*(-?\\d+)\\s*\\(\\s*\\$(\\w+)\\s*\\)"),
+            // command reg1, reg2, reg3 R-0
+            regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)"),
+            // command reg1, reg2 R-1
+            regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)"),
+            // command reg1 R-2
+            regex("(\\w+)\\s*\\$(\\w+)"),
+            // command reg1, reg2, shamt R-3 useless, same as the first.
+            regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)\\s*,\\s*(-?\\d+)"),
+            // command label J-0
+            regex("(\\w+)\\s*(\\w+)")
     };
 
     smatch result;
     for(auto i = statements.begin(); i != statements.end(); i++) {
-        if ( tolower((*i)[0]) == 'd' || (*i)[1] == 'D' ) {
+        try {
             static regex comma_split("(^\\s+)|(\\s+$)");
-            string data = i->substr(3, i->size()-3);
-            data = regex_replace(data, comma_split, " ");
-            stringstream buffer( content );
-            // convert into number
-        } else if ( i->substr(0, 4) == "resd" || i->substr(0, 4) == "RESD" ) {
-            // convert into number
-        } else for(auto j = types.begin(); j != types.end(); j++) 
-            if ( regex_match(*i, result, *j) ) {
-                // cout << *i << endl;
-                elements.push_back( {} );
-                for(size_t k = 1; k < result.size(); k++) 
-                    elements.back().push_back(result[k].str());
-                Instruction *tmp;
-                int imm = 0;
-                switch (j-types.begin()) {
-                    case 0 : 
-                        tmp = new Instruction(result[1].str(), result[2].str(), result[3].str(),
-                                atoi(result[4].str().c_str()), 'I');
-                        break;
-                    case 1 : 
-                        tmp = new Instruction(result[1].str(), result[2].str(), 
-                                atoi(result[2].str().c_str()), 'I');
-                        break;
-                    case 2 : 
-                        imm = labels[result[4].str()] - (i - statements.begin()) & ((1 << 16) - 1);
-                        tmp = new Instruction(result[1].str(), result[2].str(), result[3].str(), imm, 'I');
-                        break;
-                    case 3 : 
-                        imm = labels[result[4].str()] - (i - statements.begin()) & ((1 << 16) - 1);
-                        tmp = new Instruction(result[1].str(), result[2].str(), imm, 'I');
-                        break;
-                    case 4 : 
-                        tmp = new Instruction(result[1].str(), result[2].str(), atoi(result[3].str().c_str()),
-                               result[4].str(), 'I');
-                        break;
-                    case 5 : 
-                        tmp = new Instruction(result[1].str(), result[2].str(), result[3].str(), 
-                                result[4].str(), 'R');
-                        break;
-                    case 6 : 
-                        tmp = new Instruction(result[1].str(), result[2].str(), result[3].str(), 'R');
-                        break;
-                    case 7 : 
-                        tmp = new Instruction(result[1].str(), result[2].str(), 'R');
-                        break;
-                    case 8 : 
-                        tmp = new Instruction(result[1].str(), result[2].str(), 
-                                atoi(result[3].str().c_str()), 'R');
-                        break;
-                    case 9 : 
-                        imm = labels[result[2].str()];
-                        tmp = new Instruction(result[1].str(), imm, 'I');
-                        break;
+            if ( tolower((*i)[0]) == 'd' && tolower((*i)[1]) == 'd' ) {
+                string data = i->substr(3, i->size()-3);
+                data = regex_replace(data, comma_split, " ");
+                stringstream buffer( data );
+                buffer >> setbase(0);
+                for(unsigned int i; buffer >> i; ) {
+                    machine_code.push_back(reverse_word(i));
                 }
-                machine_code.push_back(tmp->complie());
-                break;
-            } 
+            } else if ( i->substr(0, 4) == "resd" || i->substr(0, 4) == "RESD" ) {
+                string data = i->substr(4, i->size()-4);
+                stringstream buffer( data );
+                int count;
+                buffer >> setbase(0) >> count;
+                for(int i = 0; i < count; i++) machine_code.push_back(0);
+            } else {
+                auto j = types.begin();
+                for(; j != types.end(); j++) 
+                    if ( regex_match(*i, result, *j) ) {
+                        // cout << *i << endl;
+                        elements.push_back( {} );
+                        for(size_t k = 1; k < result.size(); k++) 
+                            elements.back().push_back(result[k].str());
+                        Instruction *tmp;
+                        int imm = 0;
+                        switch (j-types.begin()) {
+                            case 0 : 
+                                tmp = new Instruction(result[1].str(), result[2].str(), result[3].str(),
+                                        atoi(result[4].str().c_str()), 'I');
+                                break;
+                            case 1 : 
+                                tmp = new Instruction(result[1].str(), result[2].str(), 
+                                        atoi(result[2].str().c_str()), 'I');
+                                break;
+                            case 2 : 
+                                if (labels.count(result[4].str())) {
+                                    throw invalid_argument("Label undefined");
+                                }
+                                imm = labels[result[4].str()] - (i - statements.begin()) & ((1 << 16) - 1);
+                                tmp = new Instruction(result[1].str(), result[2].str(), result[3].str(), imm, 'I');
+                                break;
+                            case 3 : 
+                                if (labels.count(result[4].str())) {
+                                    throw invalid_argument("Label undefined");
+                                }
+                                imm = labels[result[4].str()] - (i - statements.begin()) & ((1 << 16) - 1);
+                                tmp = new Instruction(result[1].str(), result[2].str(), imm, 'I');
+                                break;
+                            case 4 : 
+                                tmp = new Instruction(result[1].str(), result[2].str(), atoi(result[3].str().c_str()),
+                                        result[4].str(), 'I');
+                                break;
+                            case 5 : 
+                                tmp = new Instruction(result[1].str(), result[2].str(), result[3].str(), 
+                                        result[4].str(), 'R');
+                                break;
+                            case 6 : 
+                                tmp = new Instruction(result[1].str(), result[2].str(), result[3].str(), 'R');
+                                break;
+                            case 7 : 
+                                tmp = new Instruction(result[1].str(), result[2].str(), 'R');
+                                break;
+                            case 8 : 
+                                tmp = new Instruction(result[1].str(), result[2].str(), 
+                                        atoi(result[3].str().c_str()), 'R');
+                                break;
+                            case 9 : 
+                                if (labels.count(result[2].str())) {
+                                    throw invalid_argument("Label undefined");
+                                }
+                                imm = labels[result[2].str()];
+                                tmp = new Instruction(result[1].str(), imm, 'I');
+                                break;
+                        }
+                        machine_code.push_back(tmp->complie());
+                        break;
+                    }
+                if ( j == types.end() ) {
+                    throw invalid_argument("Syntax Error");
+                }
+            }
+        } catch(exception &err) {
+            throw invalid_argument("Error occurs when parsing:\n\t" + string(err.what()) + "\n\t\tat " + (*i));
+        }
     }
 }
 
@@ -172,5 +198,5 @@ void Assembler::print(string type, ostream &out) {
 }
 
 unsigned int Assembler::reverse_word(unsigned int a) {
-    return ((0xFF & a) << 24) | ((0xFF00 & a) << 8) | ((0xFF0000 & a) >> 8) | ((0xFF000000 * a) >> 24);
+    return ((0xFF & a) << 24) | ((0xFF00 & a) << 8) | ((0xFF0000 & a) >> 8) | ((0xFF000000 & a) >> 24);
 }

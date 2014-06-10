@@ -1,8 +1,12 @@
 # init
+    dd 0x12345678
+    resd 0xA
     add $t1, $zero, $zero
+    aaa
     add $t2, $zero, $zero
     addi $t3, $zero, 100
 Loop:
-    add $t1, $t1, $t2
+    atd $t1, $t1, $82
     addi $t2, $t2, 1
     bne $t2, $t3, Loop
+    j Label
