@@ -65,14 +65,14 @@ void Assembler::parse() {
                                         atoi(result[2].str().c_str()), 'I');
                                 break;
                             case 2 : 
-                                if (labels.count(result[4].str())) {
+                                if (!labels.count(result[4].str())) {
                                     throw invalid_argument("Label undefined");
                                 }
                                 imm = labels[result[4].str()] - (i - statements.begin()) & ((1 << 16) - 1);
                                 tmp = new Instruction(result[1].str(), result[2].str(), result[3].str(), imm, 'I');
                                 break;
                             case 3 : 
-                                if (labels.count(result[4].str())) {
+                                if (!labels.count(result[4].str())) {
                                     throw invalid_argument("Label undefined");
                                 }
                                 imm = labels[result[4].str()] - (i - statements.begin()) & ((1 << 16) - 1);
@@ -97,7 +97,7 @@ void Assembler::parse() {
                                         atoi(result[3].str().c_str()), 'R');
                                 break;
                             case 9 : 
-                                if (labels.count(result[2].str())) {
+                                if (!labels.count(result[2].str())) {
                                     throw invalid_argument("Label undefined");
                                 }
                                 imm = labels[result[2].str()];
