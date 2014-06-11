@@ -62,7 +62,7 @@ void Assembler::parse() {
                                 break;
                             case 1 : 
                                 tmp = new Instruction(result[1].str(), result[2].str(), 
-                                        atoi(result[2].str().c_str()), 'I');
+                                        atoi(result[3].str().c_str()), 'I');
                                 break;
                             case 2 : 
                                 if (!labels.count(result[4].str())) {
@@ -104,7 +104,7 @@ void Assembler::parse() {
                                 tmp = new Instruction(result[1].str(), imm, 'I');
                                 break;
                         }
-                        machine_code.push_back(tmp->complie());
+                        machine_code.push_back(tmp->compile());
                         break;
                     }
                 if ( j == types.end() ) {

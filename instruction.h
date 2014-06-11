@@ -83,7 +83,7 @@ public:
         }
 
     Instruction(unsigned int _mcode) : mcode(_mcode) {}
-    unsigned int complie();
+    unsigned int compile();
     string reverse();
     int getopcode();
     int getfunct();

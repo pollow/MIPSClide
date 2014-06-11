@@ -11,7 +11,7 @@ map<unsigned int, string> Instruction::re_branch  = {
 
 map<unsigned int, string> Instruction::re_op_i_0 = {
     {0x08, "addi"},     {0x09, "addiu"},
-    {0x0c, "addi"},     {0x0d, "ori"},
+    {0x0c, "andi"},     {0x0d, "ori"},
     {0x0e, "xori"},     {0x0a, "slti"},
     {0x0b, "sltiu"}
 };
@@ -175,7 +175,7 @@ map<unsigned int, string> Instruction::re_regs = {
     {30, "fp"},  {31, "ra"}
 };
 
-unsigned int Instruction::complie() {
+unsigned int Instruction::compile() {
     unsigned long result = 0;
     if ( !opcode.count(command) ) {
         throw invalid_argument("No such command"); 
