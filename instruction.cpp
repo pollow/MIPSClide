@@ -88,7 +88,7 @@ map<unsigned int, string> Instruction::re_func_0_3 = {
 };
 
 map<unsigned int, string> Instruction::re_func_0_shamt = {
-    {0x00, "sll"}, {0x02, "sra"}, {0x03, "sra"}
+    {0x00, "sll"}, {0x02, "srl"}, {0x03, "sra"}
 };
 
 // rs, rt
