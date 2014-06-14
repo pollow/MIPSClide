@@ -131,7 +131,7 @@ map<string, unsigned int> Instruction::regs = {
     {"t4", 12},  {"t5", 13},
     {"t6", 14},  {"t7", 15},
     {"s0", 16},  {"s1", 17},
-    {"s2", 18},  {"s3", 18},
+    {"s2", 18},  {"s3", 19},
     {"s4", 20},  {"s5", 21},
     {"s6", 22},  {"s7", 23},
     {"t8", 24},  {"t9", 25},
@@ -278,48 +278,52 @@ string Instruction::reverse() {
 
     string result;
 
-    if ( op == 0 ) {
-        if (funct == 0) {
-            result = "jalr $" +re_regs[rs] + ", $" + re_regs[rd];
-        } else if (re_func_0_0.count(funct)) {
-            result = re_func_0_0[funct] + " $" + re_regs[rd] + ", $" + re_regs[rs] + ", $" + re_regs[rt];
-        } else if (re_func_0_1.count(funct)) {
-            result = re_func_0_1[funct] + " $" + re_regs[rs] + ", $" + re_regs[rt];
-        } else if (re_func_0_2.count(funct)) {
-            result = re_func_0_2[funct] + " $" + re_regs[rd];
-        } else if (re_func_0_3.count(funct)) {
-            result = re_func_0_3[funct] + " $" + re_regs[rs];
-        } else if (re_func_0_shamt.count(funct)) {
-            result = re_func_0_shamt[funct] + " $" + re_regs[rd] + ", $" + re_regs[rs] + ", " + to_string(shamt);
-        } else throw invalid_argument("No such instruction");
-    } else if ( op == 0x1c ) {
-        if ( re_func_1c_0.count(funct) ) {
-            result = re_func_1c_0[funct] + " $" + re_regs[rs] + ", $" + re_regs[rt];
-        } else if ( re_func_1c_1.count(funct) ) {
-            result = re_func_1c_0[funct] + " $" + re_regs[rd] + ", $" + re_regs[rs];
-        } else if (funct == 2) {
-            result = "mul $" + re_regs[rd] + ", $" + re_regs[rs] + ", $" + re_regs[rt];
-        } else throw invalid_argument("No such instruction");
-    } else if ( op == 0x01 ) {
-        need_label = true;
-        offset = imm;
-        if ( re_branch.count(rt) && re_regs.count(rs) ) {
-            result = re_branch[rt] + " $" + re_regs[rs] + ", ";
-        } else throw invalid_argument("No such instruction");
-    } else {
-        if (re_op_i_0.count(op)) {
-            result = re_op_i_0[op] + " $" + re_regs[rt] + ", $" + re_regs[rs] + ", " + to_string(imm);
-        } else if (re_op_i_1.count(op)) {
+    try {
+        if ( op == 0 ) {
+            if (funct == 0) {
+                result = "jalr $" +re_regs[rs] + ", $" + re_regs[rd];
+            } else if (re_func_0_0.count(funct)) {
+                result = re_func_0_0[funct] + " $" + re_regs[rd] + ", $" + re_regs[rs] + ", $" + re_regs[rt];
+            } else if (re_func_0_1.count(funct)) {
+                result = re_func_0_1[funct] + " $" + re_regs[rs] + ", $" + re_regs[rt];
+            } else if (re_func_0_2.count(funct)) {
+                result = re_func_0_2[funct] + " $" + re_regs[rd];
+            } else if (re_func_0_3.count(funct)) {
+                result = re_func_0_3[funct] + " $" + re_regs[rs];
+            } else if (re_func_0_shamt.count(funct)) {
+                result = re_func_0_shamt[funct] + " $" + re_regs[rd] + ", $" + re_regs[rs] + ", " + to_string(shamt);
+            } else throw invalid_argument("No such instruction");
+        } else if ( op == 0x1c ) {
+            if ( re_func_1c_0.count(funct) ) {
+                result = re_func_1c_0[funct] + " $" + re_regs[rs] + ", $" + re_regs[rt];
+            } else if ( re_func_1c_1.count(funct) ) {
+                result = re_func_1c_0[funct] + " $" + re_regs[rd] + ", $" + re_regs[rs];
+            } else if (funct == 2) {
+                result = "mul $" + re_regs[rd] + ", $" + re_regs[rs] + ", $" + re_regs[rt];
+            } else throw invalid_argument("No such instruction");
+        } else if ( op == 0x01 ) {
             need_label = true;
             offset = imm;
-            result = re_op_i_1[op] + " $" + re_regs[rt] + ", $" + re_regs[rs] + ", ";
-        } else if (re_op_i_2.count(op)) {
-            result = re_op_i_2[op] + " $" + re_regs[rt] + ", " + to_string(imm) + "($" + re_regs[rs] + ")";
-        } else if (re_jump.count(op)) {
-            need_target = true;
-            target = gettarget();
-            result = re_jump[op] + " ";
-        } else throw invalid_argument("No such instruction");
+            if ( re_branch.count(rt) && re_regs.count(rs) ) {
+                result = re_branch[rt] + " $" + re_regs[rs] + ", ";
+            } else throw invalid_argument("No such instruction");
+        } else {
+            if (re_op_i_0.count(op)) {
+                result = re_op_i_0[op] + " $" + re_regs[rt] + ", $" + re_regs[rs] + ", " + to_string(imm);
+            } else if (re_op_i_1.count(op)) {
+                need_label = true;
+                offset = imm;
+                result = re_op_i_1[op] + " $" + re_regs[rt] + ", $" + re_regs[rs] + ", ";
+            } else if (re_op_i_2.count(op)) {
+                result = re_op_i_2[op] + " $" + re_regs[rt] + ", " + to_string(imm) + "($" + re_regs[rs] + ")";
+            } else if (re_jump.count(op)) {
+                need_target = true;
+                target = gettarget();
+                result = re_jump[op] + " ";
+            } else throw invalid_argument("No such instruction");
+        }
+    } catch (invalid_argument err) {
+        result = "dd " + to_string(mcode);
     }
 
     return result;

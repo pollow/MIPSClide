@@ -7,24 +7,24 @@ void Assembler::parse() {
     static vector<regex> types {
         // command reg1, reg2, imm I-0
         regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)\\s*,\\s*(-?\\d+)"),
-            // command reg1, imm I-1
-            regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*(-?\\d+)"),
-            // command reg1, reg2, label I-2
-            regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)\\s*,\\s*(\\w+)"),
-            // command reg1, label I-3
-            regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*(\\w+)"),
-            // command reg1, number(reg2) I-4
-            regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*(-?\\d+)\\s*\\(\\s*\\$(\\w+)\\s*\\)"),
-            // command reg1, reg2, reg3 R-0
-            regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)"),
-            // command reg1, reg2 R-1
-            regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)"),
-            // command reg1 R-2
-            regex("(\\w+)\\s*\\$(\\w+)"),
-            // command reg1, reg2, shamt R-3 useless, same as the first.
-            regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)\\s*,\\s*(-?\\d+)"),
-            // command label J-0
-            regex("(\\w+)\\s*(\\w+)")
+        // command reg1, imm I-1
+        regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*(-?\\d+)"),
+        // command reg1, reg2, label I-2
+        regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)\\s*,\\s*(\\w+)"),
+        // command reg1, label I-3
+        regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*(\\w+)"),
+        // command reg1, number(reg2) I-4
+        regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*(-?\\d+)\\s*\\(\\s*\\$(\\w+)\\s*\\)"),
+        // command reg1, reg2, reg3 R-0
+        regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)"),
+        // command reg1, reg2 R-1
+        regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)"),
+        // command reg1 R-2
+        regex("(\\w+)\\s*\\$(\\w+)"),
+        // command reg1, reg2, shamt R-3 useless, same as the first.
+        regex("(\\w+)\\s*\\$(\\w+)\\s*,\\s*\\$(\\w+)\\s*,\\s*(-?\\d+)"),
+        // command label J-0
+        regex("(\\w+)\\s*(\\w+)")
     };
 
     smatch result;
@@ -68,14 +68,14 @@ void Assembler::parse() {
                                 if (!labels.count(result[4].str())) {
                                     throw invalid_argument("Label undefined");
                                 }
-                                imm = labels[result[4].str()] - (i - statements.begin()) & ((1 << 16) - 1);
+                                imm = labels[result[4].str()] - (i - statements.begin()+1) & ((1 << 16) - 1);
                                 tmp = new Instruction(result[1].str(), result[2].str(), result[3].str(), imm, 'I');
                                 break;
                             case 3 : 
                                 if (!labels.count(result[4].str())) {
                                     throw invalid_argument("Label undefined");
                                 }
-                                imm = labels[result[4].str()] - (i - statements.begin()) & ((1 << 16) - 1);
+                                imm = labels[result[4].str()] - (i - statements.begin()+1) & ((1 << 16) - 1);
                                 tmp = new Instruction(result[1].str(), result[2].str(), imm, 'I');
                                 break;
                             case 4 : 
