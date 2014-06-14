@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
             }
             // -t (coe|plain) -o (outputfilename) -f (filename)
             if ( arg_map.count('t') ) {
-                type = arg_map['m'];
+                type = arg_map['t'];
             } else {
                 type = "plain";
             }
