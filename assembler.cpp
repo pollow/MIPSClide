@@ -183,7 +183,7 @@ void Assembler::print(string type, ostream &out) {
 #endif
 
     if ( type == "coe" ) {
-        out << "memory_initialization_radix = 16" << endl << "memory_initialization_vector=" << endl;
+        out << "memory_initialization_radix=16;" << endl << "memory_initialization_vector=" << endl;
         for(auto i : machine_code) {
             out << setfill('0') << setw(8) << hex << reverse_word(i) << ',' << endl;
         }
