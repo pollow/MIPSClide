@@ -1,0 +1,37 @@
+	lui $t0, 4096
+	xor $t1, $t1, $t1
+	sw $t1, 0($t0)
+	lui $s0, 8192
+	lui $s1, 12288
+	xor $s2, $s2, $s2
+	xor $s3, $s3, $s3
+	addi $s3, $s3, 1
+	lui $s4, 1
+	addi $s4, $s4, -1
+	ori $s5, $zero, 128
+loop:
+	sw $s2, 0($s0)
+	sw $s3, 0($s1)
+	jal second
+	addi $s2, $s2, 1
+	add $s3, $s3, $s3
+	slt $t0, $s4, $s2
+	beq $t0, $zero, Label1
+	xor $s2, $s2, $s2
+Label1:
+	slt $t0, $s5, $s3
+	beq $t0, $zero, Label2
+	addi $s3, $zero, 1
+Label2:
+	j loop
+
+second:
+	lui $t0, 28672
+	lw $t1, 0($t0)
+	addi $t2, $zero, 1000
+second_loop:
+	lw $t3, 0($t0)
+	sub $t3, $t3, $t1
+	slti $t3, $t3, 1000
+	bne $t3, $zero, second_loop
+	jr $ra
