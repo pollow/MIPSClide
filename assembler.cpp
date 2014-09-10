@@ -131,7 +131,7 @@ void Assembler::calc_label() {
 
 void Assembler::trim() {
     static regex trim("(^\\s+)|(\\s+$)");
-    static regex comment("#.*$");
+    static regex comment("\\s*#.*");
     for(auto i=statements.begin(); i!=statements.end(); i++) {
         *i = regex_replace(*i, trim, "");
         *i = regex_replace(*i, comment, "");
@@ -190,7 +190,7 @@ void Assembler::print(string type, ostream &out) {
         out << "00000000;" << endl;
     } else if ( type == "plain" ) {
         for(auto i : machine_code) {
-            out << "0x" << setfill('0') << setw(8) << hex << i << endl;
+            out << setfill('0') << setw(8) << hex << i << endl;
         }
     } else {
         throw invalid_argument("Output type could only be 'coe' or 'plain'");
