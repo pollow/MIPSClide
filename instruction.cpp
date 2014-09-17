@@ -232,7 +232,7 @@ unsigned int Instruction::compile() {
             result += imm;
             break;
         case 'J':
-            result += opcode[command];
+            result += opcode[command] << 26;
             result += imm;
             break;
     }
