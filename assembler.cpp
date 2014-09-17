@@ -30,10 +30,16 @@ void Assembler::parse() {
     smatch result;
     for(auto i = statements.begin(); i != statements.end(); i++) {
         try {
-            static regex comma_split("(^\\s+)|(\\s+$)");
+            // static regex comma_split("(^\\s+)|(\\s+$)");
+            static regex comma_split(",");
             if ( tolower((*i)[0]) == 'd' && tolower((*i)[1]) == 'd' ) {
                 string data = i->substr(3, i->size()-3);
                 data = regex_replace(data, comma_split, " ");
+                for(auto j = labels.begin(); j != labels.end(); j++) {
+                    if (data.find(j->first) != string::npos) {
+                        data = regex_replace(data, regex(j->first), (stringstream() << j->second).str());
+                    }
+                }
                 stringstream buffer( data );
                 buffer >> setbase(0);
                 for(unsigned int i; buffer >> i; ) {
@@ -101,7 +107,7 @@ void Assembler::parse() {
                                     throw invalid_argument("Label undefined");
                                 }
                                 imm = labels[result[2].str()];
-                                tmp = new Instruction(result[1].str(), imm, 'I');
+                                tmp = new Instruction(result[1].str(), imm, 'J');
                                 break;
                         }
                         machine_code.push_back(tmp->compile());
